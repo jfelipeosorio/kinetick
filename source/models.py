@@ -8,7 +8,7 @@ import scipy.integrate as integrate
 def heat_u0(x):
       return -4*jnp.square(x - 0.5) + 1.
 def bn(n):
-            return integrate.quad(lambda y: 2*(-4(y-0.5)**2+1)*np.sin(n*np.pi*y),0,1)
+            return integrate.quad(lambda y, n=n: 2*(-4(y-0.5)**2+1)*np.sin(n*np.pi*y),0,1)
       
 def heat_sol(t,x,m):
       '''
