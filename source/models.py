@@ -2,6 +2,12 @@ import numpy as np
 import jax.numpy as jnp
 from jax import grad, jacfwd, vmap, jit
 
+# heat 1D
+
+def heat_u0(x):
+      return -4*jnp.square(x - 0.5) + 1.
+
+
 # ode
 def ODE_solutions(X, k, d, c, m = 3):
 	
