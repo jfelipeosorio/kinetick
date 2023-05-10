@@ -5,22 +5,26 @@ import scipy.integrate as integrate
 
 # heat 1D
 
+
+
 def heat_u0(x):
-      return -4*jnp.square(x - 0.5) + 1.
-def bn(n):
-            return integrate.quad(lambda y, n=n: 2*(-4(y-0.5)**2+1)*np.sin(n*np.pi*y),0,1)
+    return -4*jnp.square(x - 0.5) + 1.
+def bn(k):        
+    def myfun(y,k):
+        return 2*(-4*(y-0.5)**2+1)*np.sin(k*np.pi*y)
+    return integrate.quad(myfun,0,1,args=(k,))
       
-def heat_sol(t,x,m):
-      '''
-      t: time coordinate.
-      x: space coordinate.
-      n: level of truncation in analytic solution.
-      '''
-      sum = 0.
-      for i in range(m):
-            sum += bn(i) * np.exp(-i**2*np.pi**2*t)*np.sin(i*np.Pi*x)
-      
-      return sum
+def heat_sol(x,t,m):
+    '''
+    t: time coordinate.
+    x: space coordinate.
+    n: level of truncation in analytic solution.
+    '''
+    sum = 0.
+    for i in range(1,m):
+        sum += bn(i)[0] * np.exp(-i**2*np.pi**2*t)*np.sin(i*np.pi*x)
+
+    return sum
       
 
 
