@@ -30,22 +30,24 @@ def heat_sol(x,t,m):
 def ad_u0(x):
     return -4*jnp.square(x - 0.5) + 1.
 
-def ad_bn(k,beta):        
+def ad_bn(k,beta,c):        
     def myfun(y,k,beta):
-        return 2*np.exp(-y*beta/2)*(-4*((y-0.5)**2)+1)*np.sin(k*np.pi*y)
-    return integrate.quad(myfun,0,1,args=(k,beta,))
+        return 2*np.exp(-y*beta/(2*c^2))*(-4*jnp.square(y - 0.5) + 1.)*np.sin(k*np.pi*y)
+    return integrate.quad(myfun,0,1,args=(k,beta,c,))
 
-def ad_sol(x,t,beta,m):
+def ad_sol(x,t,beta,c,m):
     '''
-    t: time coordinate.
     x: space coordinate.
-    n: level of truncation in analytic solution.
+    t: time coordinate.
+    beta: advection coefficient
+    c: diffusion coefficient
+    m: level of truncation in analytic solution.
     '''
     sum = 0.
     for i in range(1,m):
-        sum += ad_bn(i,beta)[0] * np.exp(-(i**2)*(np.pi**2)*t)*np.sin(i*np.pi*x)
+        sum += ad_bn(i,beta,c)[0] * np.exp(-(c**2)*(i**2)*(np.pi**2)*t)*np.sin(i*np.pi*x)
 
-    return np.exp(-(beta**2)*t/4)*np.exp(beta*x/2)*sum
+    return np.exp(-(beta**2)*t/(4*c^2))*np.exp(beta*x/(2*c**2))*sum
 
 # ode
 def ODE_solutions(X, k, d, c, m = 3):
