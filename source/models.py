@@ -51,6 +51,11 @@ def ad_sol(x,t,beta,c,m):
 
 # Transport 1d
 
+def transport_u0(x):
+    return jnp.exp(-x**2)
+
+def transport_sol(x,t,c):
+    return transport_u0(x-c*t)
 
 # ode
 def ODE_solutions(X, k, d, c, m = 3):
