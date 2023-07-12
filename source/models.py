@@ -31,9 +31,9 @@ def ad_u0(x):
     return -4*jnp.square(x - 0.5) + 1.
 
 def ad_bn(k,beta,c):        
-    def myfun(y,k,beta):
-        return 2*np.exp(-y*beta/(2*c^2))*(-4*jnp.square(y - 0.5) + 1.)*np.sin(k*np.pi*y)
-    return integrate.quad(myfun,0,1,args=(k,beta,c,))
+    def myfun(y,k,beta,c):
+        return 2*np.exp(-y*beta/(2*(c**2)))*(-4*jnp.square(y - 0.5) + 1.)*np.sin(k*np.pi*y)
+    return integrate.quad(myfun,0,1,args=(k,beta,c,))  
 
 def ad_sol(x,t,beta,c,m):
     '''
@@ -47,7 +47,10 @@ def ad_sol(x,t,beta,c,m):
     for i in range(1,m):
         sum += ad_bn(i,beta,c)[0] * np.exp(-(c**2)*(i**2)*(np.pi**2)*t)*np.sin(i*np.pi*x)
 
-    return np.exp(-(beta**2)*t/(4*c^2))*np.exp(beta*x/(2*c**2))*sum
+    return np.exp(-(beta**2)*t/(4*(c**2)))*np.exp(beta*x/(2*c**2))*sum
+
+# Transport 1d
+
 
 # ode
 def ODE_solutions(X, k, d, c, m = 3):
