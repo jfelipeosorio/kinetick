@@ -57,6 +57,30 @@ def transport_u0(x):
 def transport_sol(x,t,c):
     return transport_u0(x-c*t)
 
+# Laplace 2d
+
+def f_bc(x):
+    return np.sin(np.pi*x)
+
+def lap_bn(k):        
+    def myfun(y,k):
+        return 2/np.sinh(k*np.pi)*f_bc(y)*np.sin(k*np.pi*y)
+    return integrate.quad(myfun,0,1,args=(k,))
+
+def lap_sol(x,y,m):
+    '''
+    x: space coordinate.
+    t: time coordinate.
+    beta: advection coefficient
+    c: diffusion coefficient
+    m: level of truncation in analytic solution.
+    '''
+    sum = 0.
+    for i in range(1,m):
+        sum += lap_bn(i)[0] * np.sin(i*np.pi*x) * np.sinh(i*np.pi*(1-y))
+
+    return sum
+
 # ode
 def ODE_solutions(X, k, d, c, m = 3):
 	
