@@ -68,6 +68,14 @@ def f_lap(x):
     C = 64*np.exp(-4*((x[:,0]-0.5)**2 + (x[:,1]-0.5)**2))*((x[:,1]-0.5)**2)
     return A+B+C
 
+# Fokker-Planck 1d
+
+def M(x):
+    return np.exp(-np.abs(x)**2/2)
+
+def fp_1d_sol(t,x):
+    return 1/(np.sqrt(2*np.pi*(1-np.exp(-2*t))))*np.exp( (-np.abs(x)**2) / (2*(1-np.exp(-2*t))) )
+
 # ode
 def ODE_solutions(X, k, d, c, m = 3):
 	

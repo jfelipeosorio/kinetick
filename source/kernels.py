@@ -57,6 +57,10 @@ def K_ddddot(kernel, T ,T_, params, arg1, arg2, arg3, arg4):
 	K_4Dot = jit(grad(grad(grad(grad(kernel,arg1),arg2),arg3),arg4))
 	return vmap(lambda t: vmap(lambda t_: K_4Dot(t ,t_, params))(T_))(T)
 
+# Kernel Matrices - Fokker-Planck 1d
+
+
+
 #	2D
 
 # Gaussian Kernel
