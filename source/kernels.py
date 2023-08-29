@@ -1,5 +1,6 @@
 import jax.numpy as jnp
 from jax import grad, jacfwd, vmap, jit
+from functools import partial
 
 #	1D 
 
@@ -59,6 +60,21 @@ def K_ddddot(kernel, T ,T_, params, arg1, arg2, arg3, arg4):
 
 # Kernel Matrices - Fokker-Planck 1d
 
+def M(x):
+	return jnp.exp(-x**2/2)
+
+def KoverMx(t,t_,kernel,params):
+	return kernel(t,t_,params) / M(t)
+
+def partial_KoverMx(T,T_,kernel,params,arg):
+	KoverMx_Dot = grad(KoverMx,arg)
+	return vmap(lambda t: vmap(lambda t_: KoverMx_Dot(t,t_,kernel,params))(T_))(T)
+
+def KoverMy(t,t_,kernel,params):
+	return kernel(t,t_,params) / M(t_)
+
+def MtimesPartialx(t,t_,params):
+	return M(t)*partial_x_KoverMx(x)
 
 
 #	2D
