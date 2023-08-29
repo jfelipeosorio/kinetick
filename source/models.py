@@ -76,6 +76,17 @@ def M(x):
 def fp_1d_sol(t,x):
     return 1/(np.sqrt(2*np.pi*(1-np.exp(-2*t))))*np.exp( (-np.abs(x)**2) / (2*(1-np.exp(-2*t))) )
 
+# 1D Heat Equation with variable coeff
+
+def a(x):
+	return jnp.square(x)
+
+def heat_var_u0(x):
+    return jnp.sine(jnp.pi*x)
+
+def heat_var_sol(t,x):
+    
+
 # ode
 def ODE_solutions(X, k, d, c, m = 3):
 	
