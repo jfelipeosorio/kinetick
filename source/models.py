@@ -85,6 +85,7 @@ def heat_var_u0(x):
     return jnp.sine(jnp.pi*x)
 
 def heat_var_sol(t,x):
+    return 0
     
 
 # ode
