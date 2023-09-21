@@ -93,6 +93,9 @@ def partial_MtimesPartialy(T,T_,kernel,params):
 	return vmap(lambda t: vmap(lambda t_: Dot_KoverMy_Dot(t,t_,kernel,params))(T_))(T)
 
 
+
+
+
 #	2D
 
 # Gaussian Kernel
