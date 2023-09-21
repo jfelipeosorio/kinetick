@@ -82,14 +82,14 @@ def KoverMy(t,t_,kernel,params):
 	return kernel(t,t_,params) / M(t_)
 
 def partial_KoverMy(t,t_,kernel,params):
-	KoverMx_Dot = grad(KoverMx,1)
+	KoverMx_Dot = grad(KoverMy,1)
 	return KoverMx_Dot(t,t_,kernel,params)
 
 def MtimesPartialy(t,t_,kernel,params):
 	return M(t_)*partial_KoverMy(t,t_,kernel,params)
 
 def partial_MtimesPartialy(T,T_,kernel,params):
-	Dot_KoverMy_Dot = grad(MtimesPartialx,1)
+	Dot_KoverMy_Dot = grad(MtimesPartialy,1)
 	return vmap(lambda t: vmap(lambda t_: Dot_KoverMy_Dot(t,t_,kernel,params))(T_))(T)
 
 
