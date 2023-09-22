@@ -74,7 +74,10 @@ def M(x):
     return np.exp(-np.abs(x)**2/2)
 
 def fp_1d_sol(t,x):
-    return 1/(np.sqrt(2*np.pi*(1-np.exp(-2*t))))*np.exp( (-np.abs(x)**2) / (2*(1-np.exp(-2*t))) )
+    return 1 / ((np.sqrt(2*np.pi*(1-np.exp(-2*t))))) * np.exp( (-np.abs(x)**2) / (2*(1-np.exp(-2*t))) )
+
+def fp_1d_u0(x):
+    return fp_1d_sol(0.1,x)
 
 # 1D Heat Equation with variable coeff
 
