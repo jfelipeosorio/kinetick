@@ -66,10 +66,19 @@ def M(x):
 def KoverMx(t,t_,kernel,params):
 	return kernel(t,t_,params) / M(t)
 
+def partial_KoverMx_(T,T_,kernel,params):
+	KoverMx_Dot = grad(KoverMx,0)
+	return vmap(lambda t: vmap(lambda t_: KoverMx_Dot(t,t_,kernel,params))(T_))(T)
+
+# This version of the function only takes scalars as inputs, not arrays
 def partial_KoverMx(t,t_,kernel,params):
 	KoverMx_Dot = grad(KoverMx,0)
 	return KoverMx_Dot(t,t_,kernel,params)
 
+def MtimesPartialx_(T, T_, kernel, params):
+	return vmap(lambda t: vmap(lambda t_: M(t)*partial_KoverMx(t,t_,kernel,params))(T_))(T)
+
+# This version of the function only takes scalars as inputs, not arrays
 def MtimesPartialx(t,t_,kernel,params):
 	return M(t)*partial_KoverMx(t,t_,kernel,params)
 
@@ -94,6 +103,9 @@ def partial_KoverMy(t,t_,kernel,params):
 def MtimesPartialy(t,t_,kernel,params):
 	return M(t_)*partial_KoverMy(t,t_,kernel,params)
 
+def MtimesPartialy_(T,T_,kernel,params):
+	return vmap(lambda t: vmap(lambda t_: M(t_)*partial_KoverMy(t,t_,kernel,params))(T_))(T)
+
 def partial_MtimesPartialy(T,T_,kernel,params):
 	Dot_KoverMy_Dot = grad(MtimesPartialy,1)
 	return vmap(lambda t: vmap(lambda t_: Dot_KoverMy_Dot(t,t_,kernel,params))(T_))(T)
@@ -114,12 +126,18 @@ def partialy_partialx_MtimesPartialx_overMy_timesM(t,t_,kernel,params):
 	Dot_y = grad(partialx_MtimesPartialx_overMy,1)
 	return Dot_y(t,t_,kernel,params) * M(t_)
 
-
 def big_term(T,T_,kernel,params):
 	final = grad(partialy_partialx_MtimesPartialx_overMy_timesM, 1)
 	return vmap(lambda t: vmap(lambda t_: final(t,t_,kernel,params))(T_))(T)
  
+# boundary-boundary
 
+def partialx_overMy(t, t_, kernel, params):
+	return partial_KoverMx(t,t_,kernel,params) / M(t_)
+
+def partial_partial(T, T_, kernel, params):
+	pp = grad(partialx_overMy,1)
+	return vmap(lambda t: vmap(lambda t_: pp(t,t_,kernel,params))(T_))(T)
 
 
 #	2D
