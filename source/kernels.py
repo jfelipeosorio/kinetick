@@ -25,16 +25,16 @@ def Matern_Kernel_0(t,t_,params):
 	coef = sigma**2
 	return coef * jnp.exp(-d/rho)
 
-def Matern_Kernel_1(t,t_,params):
+def Matern_Kernel_32_1D(t,t_,params):
 	rho, sigma = params
 	d = jnp.sqrt(jnp.dot(t-t_,t-t_))
 	coef = sigma**2 * (1 + (jnp.sqrt(3)*d/rho))
 	return coef * jnp.exp(-jnp.sqrt(3)*d/rho)
 
-def Matern_Kernel_2(t,t_,params):
-	rho, sigma = params
-	d = jnp.sqrt(jnp.dot(t-t_,t-t_))
-	coef = sigma**2 * (1 + (jnp.sqrt(5)*d/rho) + (5*d**2/3*rho**2))
+def Matern_Kernel_52_1D(t,t_,params):
+	rho = params
+	d = jnp.sqrt(jnp.dot(t-t_,t-t_) + 1e-8)
+	coef = 1 + (jnp.sqrt(5)*d/rho) + (5*d**2/(3*rho**2))
 	return coef * jnp.exp(-jnp.sqrt(5)*d/rho)
 
 # Kernel Matrices
