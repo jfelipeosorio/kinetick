@@ -206,16 +206,16 @@ def partial_MtimesPartialx2D(T,T_,kernel,params):
 
 # This version of the function only takes scalars as inputs, not arrays
 def partial_MtimesPartialx_2D(t1,t2,t1_,t2_,kernel,params):
-	Dot_KoverMx_Dot = grad(grad(MtimesPartialx,0),1)
+	Dot_KoverMx_Dot = grad(grad(MtimesPartialx2D,0),1)
 	return Dot_KoverMx_Dot(t1,t2,t1_,t2_,kernel,params)
 
 
 
 def KoverMy2D(t1,t2,t1_,t2_,kernel,params):
-	return kernel(t1,t2,t1_,t2_,params) / M(t1_,t2_)
+	return kernel(t1,t2,t1_,t2_,params) / M_2D(t1_,t2_)
 
 def partial_KoverMy2D(t1,t2,t1_,t2_,kernel,params):
-	KoverMy_Dot = grad(grad(KoverMy,1),2)
+	KoverMy_Dot = grad(grad(KoverMy2D,1),2)
 	return KoverMy_Dot(t1,t2,t1_,t2_,kernel,params)
 
 def MtimesPartialy2D(t1,t2,t1_,t2_,kernel,params):
@@ -225,7 +225,7 @@ def MtimesPartialy_2D(T,T_,kernel,params):
 	return vmap(lambda t: vmap(lambda t_: M_2D(t_[0],t_[1])*partial_KoverMy2D(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
 
 def partial_MtimesPartialy2D(T,T_,kernel,params):
-	Dot_KoverMy_Dot = grad(grad(MtimesPartialy,1),2)
+	Dot_KoverMy_Dot = grad(grad(MtimesPartialy2D,1),2)
 	return vmap(lambda t: vmap(lambda t_: Dot_KoverMy_Dot(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
 
 # This version of the function only takes scalars as inputs, not arrays
@@ -236,23 +236,23 @@ def partial_MtimesPartialy_2D(t1,t2,t1_,t2_,kernel,params):
 
 # Build the biggest term
 
-def partialx_MtimesPartialx_overMy2D(t,t_,kernel,params):
-	Dot_KoverMx_Dot = grad(MtimesPartialx,0)
-	return Dot_KoverMx_Dot(t,t_,kernel,params)/M(t_)
+def partialx_MtimesPartialx_overMy2D(t1,t2,t1_,t2_,kernel,params):
+	Dot_KoverMx_Dot = grad(grad(MtimesPartialx2D,0),1)
+	return Dot_KoverMx_Dot(t1,t2,t1_,t2_,kernel,params)/M_2D(t1_,t2_)
 
-def partialy_partialx_MtimesPartialx_overMy_timesM(t,t_,kernel,params):
-	Dot_y = grad(partialx_MtimesPartialx_overMy,1)
-	return Dot_y(t,t_,kernel,params) * M(t_)
+def partialy_partialx_MtimesPartialx_overMy_timesM2D(t1,t2,t1_,t2_,kernel,params):
+	Dot_y = grad(grad(partialx_MtimesPartialx_overMy2D,1),2)
+	return Dot_y(t1,t2,t1_,t2_,kernel,params) / M_2D(t1_,t2_)
 
-def big_term(T,T_,kernel,params):
-	final = grad(partialy_partialx_MtimesPartialx_overMy_timesM, 1)
-	return vmap(lambda t: vmap(lambda t_: final(t,t_,kernel,params))(T_))(T)
+def big_term2D(T,T_,kernel,params):
+	final = grad(grad(partialy_partialx_MtimesPartialx_overMy_timesM2D, 1),2)
+	return vmap(lambda t: vmap(lambda t_: final(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
  
 # boundary-boundary
 
-def partialx_overMy(t, t_, kernel, params):
-	return partial_KoverMx(t,t_,kernel,params) / M(t_)
+def partialx_overMy2D(t1,t2,t1_,t2_, kernel, params):
+	return partial_KoverMx2D(t1,t2,t1_,t2_,kernel,params) / M_2D(t1_,t2_)
 
-def partial_partial(T, T_, kernel, params):
-	pp = grad(partialx_overMy,1)
-	return vmap(lambda t: vmap(lambda t_: pp(t,t_,kernel,params))(T_))(T)
+def partial_partial2D(T, T_, kernel, params):
+	pp = grad(grad(partialx_overMy2D,1),2)
+	return vmap(lambda t: vmap(lambda t_: pp(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)

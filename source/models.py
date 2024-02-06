@@ -79,6 +79,18 @@ def fp_1d_sol(t,x):
 def fp_1d_u0(x):
     return fp_1d_sol(0.1,x)
 
+# Fokker-Planck 2d
+
+def M2d(x,y):
+    return np.exp(-(x**2 + y**2)/2)
+
+def fp_2d_sol(t,x,y):
+    K = 1/(2*(1-np.exp(-2*t)))
+    return K/np.pi*np.exp(-(np.power(x,2) + np.power(y,2))/K)
+    
+def fp_2d_u0(x,y):
+    return fp_2d_sol(0.1,x,y)
+
 # 1D Heat Equation with variable coeff
 
 def a(x):
