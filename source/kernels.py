@@ -184,59 +184,59 @@ def M_2D(x1,x2):
 def KoverMx2D(t1,t2,t1_,t_2,kernel,params):
 	return kernel(t1,t2,t1_,t_2,params) / M_2D(t1,t2)
 
-def partial_KoverMx_2D(T,T_,kernel,params, arg1, arg2):
-	KoverMx_Dot = grad(grad(KoverMx2D,arg1),arg2)
+def partial_KoverMx_2D(T,T_,kernel,params):
+	KoverMx_Dot = grad(grad(KoverMx2D,0),1)
 	return vmap(lambda t: vmap(lambda t_: KoverMx_Dot(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
 
 # This version of the function only takes scalars as inputs, not arrays
-def partial_KoverMx2D(t,t_,kernel,params, arg1, arg2):
-	KoverMx_Dot = grad(grad(KoverMx2D,arg1),arg2)
-	return KoverMx_Dot(t,t_,kernel,params)
+def partial_KoverMx2D(t1,t2,t1_,t2_,kernel,params):
+	KoverMx_Dot = grad(grad(KoverMx2D, 0), 1)
+	return KoverMx_Dot(t1,t2,t1_,t2_,kernel,params)
 
-def MtimesPartialx_2D(T, T_, kernel, params):
-	return vmap(lambda t: vmap(lambda t_: M_2D(t[0],t[1])*partial_KoverMx2D(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
-
-# This version of the function only takes scalars as inputs, not arrays
-def MtimesPartialx(t,t_,kernel,params):
-	return M(t)*partial_KoverMx(t,t_,kernel,params)
-
-def partial_MtimesPartialx(T,T_,kernel,params):
-	Dot_KoverMx_Dot = grad(MtimesPartialx,0)
-	return vmap(lambda t: vmap(lambda t_: Dot_KoverMx_Dot(t,t_,kernel,params))(T_))(T)
+def MtimesPartialx_2D(T, T_, kernel, params): 
+	return vmap(lambda t: vmap(lambda t_: M_2D(t[0],t[1])*partial_KoverMx2D(t[0],t[1],t_[0],t_[1],kernel,params))(T_))(T)
 
 # This version of the function only takes scalars as inputs, not arrays
-def partial_MtimesPartialx_(t,t_,kernel,params):
-	Dot_KoverMx_Dot = grad(MtimesPartialx,0)
-	return Dot_KoverMx_Dot(t,t_,kernel,params)
+def MtimesPartialx2D(t1,t2,t1_,t_2,kernel,params):
+	return M_2D(t1,t2)*partial_KoverMx2D(t1,t2,t1_,t_2,kernel,params)
 
-
-
-def KoverMy(t,t_,kernel,params):
-	return kernel(t,t_,params) / M(t_)
-
-def partial_KoverMy(t,t_,kernel,params):
-	KoverMx_Dot = grad(KoverMy,1)
-	return KoverMx_Dot(t,t_,kernel,params)
-
-def MtimesPartialy(t,t_,kernel,params):
-	return M(t_)*partial_KoverMy(t,t_,kernel,params)
-
-def MtimesPartialy_(T,T_,kernel,params):
-	return vmap(lambda t: vmap(lambda t_: M(t_)*partial_KoverMy(t,t_,kernel,params))(T_))(T)
-
-def partial_MtimesPartialy(T,T_,kernel,params):
-	Dot_KoverMy_Dot = grad(MtimesPartialy,1)
-	return vmap(lambda t: vmap(lambda t_: Dot_KoverMy_Dot(t,t_,kernel,params))(T_))(T)
+def partial_MtimesPartialx2D(T,T_,kernel,params):
+	Dot_KoverMx_Dot = grad(grad(MtimesPartialx2D, 0), 1)
+	return vmap(lambda t: vmap(lambda t_: Dot_KoverMx_Dot(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
 
 # This version of the function only takes scalars as inputs, not arrays
-def partial_MtimesPartialy_(t,t_,kernel,params):
-	Dot_KoverMy_Dot = grad(MtimesPartialy,1)
-	return Dot_KoverMy_Dot(t,t_,kernel,params)
+def partial_MtimesPartialx_2D(t1,t2,t1_,t2_,kernel,params):
+	Dot_KoverMx_Dot = grad(grad(MtimesPartialx,0),1)
+	return Dot_KoverMx_Dot(t1,t2,t1_,t2_,kernel,params)
+
+
+
+def KoverMy2D(t1,t2,t1_,t2_,kernel,params):
+	return kernel(t1,t2,t1_,t2_,params) / M(t1_,t2_)
+
+def partial_KoverMy2D(t1,t2,t1_,t2_,kernel,params):
+	KoverMy_Dot = grad(grad(KoverMy,1),2)
+	return KoverMy_Dot(t1,t2,t1_,t2_,kernel,params)
+
+def MtimesPartialy2D(t1,t2,t1_,t2_,kernel,params):
+	return M_2D(t1_,t2_)*partial_KoverMy2D(t1,t2,t1_,t2_,kernel,params)
+
+def MtimesPartialy_2D(T,T_,kernel,params):
+	return vmap(lambda t: vmap(lambda t_: M_2D(t_[0],t_[1])*partial_KoverMy2D(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
+
+def partial_MtimesPartialy2D(T,T_,kernel,params):
+	Dot_KoverMy_Dot = grad(grad(MtimesPartialy,1),2)
+	return vmap(lambda t: vmap(lambda t_: Dot_KoverMy_Dot(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
+
+# This version of the function only takes scalars as inputs, not arrays
+def partial_MtimesPartialy_2D(t1,t2,t1_,t2_,kernel,params):
+	Dot_KoverMy_Dot = grad(grad(MtimesPartialy,1),2)
+	return Dot_KoverMy_Dot(t1,t2,t1_,t2_,kernel,params)
 
 
 # Build the biggest term
 
-def partialx_MtimesPartialx_overMy(t,t_,kernel,params):
+def partialx_MtimesPartialx_overMy2D(t,t_,kernel,params):
 	Dot_KoverMx_Dot = grad(MtimesPartialx,0)
 	return Dot_KoverMx_Dot(t,t_,kernel,params)/M(t_)
 
