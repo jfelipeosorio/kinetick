@@ -178,23 +178,23 @@ def partial_partial(T, T_, kernel, params):
 
 # Kernel Matrices - Fokker-Planck 2d
 
-def M_2D(x,y):
-	return jnp.exp(-(x**2/2 + y**2/2))
+def M_2D(x1,x2):
+	return jnp.exp(-(x1**2/2 + x2**2/2))
 
-def KoverMx2D(t,t_,kernel,params):
-	return kernel(t,t_,params) / M(t)
+def KoverMx2D(t1,t2,t1_,t_2,kernel,params):
+	return kernel(t1,t2,t1_,t_2,params) / M_2D(t1,t2)
 
-def partial_KoverMx_(T,T_,kernel,params):
-	KoverMx_Dot = grad(KoverMx,0)
-	return vmap(lambda t: vmap(lambda t_: KoverMx_Dot(t,t_,kernel,params))(T_))(T)
+def partial_KoverMx_2D(T,T_,kernel,params, arg1, arg2):
+	KoverMx_Dot = grad(grad(KoverMx2D,arg1),arg2)
+	return vmap(lambda t: vmap(lambda t_: KoverMx_Dot(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
 
 # This version of the function only takes scalars as inputs, not arrays
-def partial_KoverMx(t,t_,kernel,params):
-	KoverMx_Dot = grad(KoverMx,0)
+def partial_KoverMx2D(t,t_,kernel,params, arg1, arg2):
+	KoverMx_Dot = grad(grad(KoverMx2D,arg1),arg2)
 	return KoverMx_Dot(t,t_,kernel,params)
 
-def MtimesPartialx_(T, T_, kernel, params):
-	return vmap(lambda t: vmap(lambda t_: M(t)*partial_KoverMx(t,t_,kernel,params))(T_))(T)
+def MtimesPartialx_2D(T, T_, kernel, params):
+	return vmap(lambda t: vmap(lambda t_: M_2D(t[0],t[1])*partial_KoverMx2D(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
 
 # This version of the function only takes scalars as inputs, not arrays
 def MtimesPartialx(t,t_,kernel,params):
