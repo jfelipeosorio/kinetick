@@ -201,13 +201,16 @@ def MtimesPartialx2D(t1,t2,t1_,t_2,kernel,params):
 	return M_2D(t1,t2)*partial_KoverMx2D(t1,t2,t1_,t_2,kernel,params)
 
 def partial_MtimesPartialx2D(T,T_,kernel,params):
-	Dot_KoverMx_Dot = grad(grad(MtimesPartialx2D, 0), 1)
-	return vmap(lambda t: vmap(lambda t_: Dot_KoverMx_Dot(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
+	Dot_KoverMx_Dot_0 = grad(MtimesPartialx2D, 0)
+	Dot_KoverMx_Dot_1 = grad(MtimesPartialx2D, 1)
+	return vmap(lambda t: vmap(lambda t_: Dot_KoverMx_Dot_0(t[0],t[1], t_[0],t_[1],kernel,params) + Dot_KoverMx_Dot_1(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T) # partial outside is a divergence
 
 # This version of the function only takes scalars as inputs, not arrays
 def partial_MtimesPartialx_2D(t1,t2,t1_,t2_,kernel,params):
-	Dot_KoverMx_Dot = grad(grad(MtimesPartialx2D,0),1)
-	return Dot_KoverMx_Dot(t1,t2,t1_,t2_,kernel,params)
+	# Dot_KoverMx_Dot = grad(grad(MtimesPartialx2D,0),1)
+	Dot_KoverMx_Dot_0 = grad(MtimesPartialx2D,0)
+	Dot_KoverMx_Dot_1 = grad(MtimesPartialx2D,1)
+	return Dot_KoverMx_Dot_0(t1,t2,t1_,t2_,kernel,params) + Dot_KoverMx_Dot_1(t1,t2,t1_,t2_,kernel,params)
 
 
 
@@ -225,13 +228,15 @@ def MtimesPartialy_2D(T,T_,kernel,params):
 	return vmap(lambda t: vmap(lambda t_: M_2D(t_[0],t_[1])*partial_KoverMy2D(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
 
 def partial_MtimesPartialy2D(T,T_,kernel,params):
-	Dot_KoverMy_Dot = grad(grad(MtimesPartialy2D,1),2)
-	return vmap(lambda t: vmap(lambda t_: Dot_KoverMy_Dot(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
+	Dot_KoverMy_Dot_1 = grad(MtimesPartialy2D,1)
+	Dot_KoverMy_Dot_2 = grad(MtimesPartialy2D,2)
+	return vmap(lambda t: vmap(lambda t_: Dot_KoverMy_Dot_1(t[0],t[1], t_[0],t_[1],kernel,params) + Dot_KoverMy_Dot_2(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
 
 # This version of the function only takes scalars as inputs, not arrays
 def partial_MtimesPartialy_2D(t1,t2,t1_,t2_,kernel,params):
-	Dot_KoverMy_Dot = grad(grad(MtimesPartialy,1),2)
-	return Dot_KoverMy_Dot(t1,t2,t1_,t2_,kernel,params)
+	Dot_KoverMy_Dot_1 = grad(MtimesPartialy2D,1)
+	Dot_KoverMy_Dot_2 = grad(MtimesPartialy2D,2)
+	return Dot_KoverMy_Dot_1(t1,t2,t1_,t2_,kernel,params) + Dot_KoverMy_Dot_2(t1,t2,t1_,t2_,kernel,params)
 
 
 # Build the biggest term
@@ -256,3 +261,42 @@ def partialx_overMy2D(t1,t2,t1_,t2_, kernel, params):
 def partial_partial2D(T, T_, kernel, params):
 	pp = grad(grad(partialx_overMy2D,1),2)
 	return vmap(lambda t: vmap(lambda t_: pp(t[0],t[1], t_[0],t_[1],kernel,params))(T_))(T)
+
+
+# Boundary phis
+
+def bottom_partial_KoverMx_2D(T,T_,kernel,params):
+	KoverMx_Dot = grad(grad(KoverMx2D,0),1)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,-1.]), KoverMx_Dot(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+
+# This version of the function only takes scalars as inputs, not arrays
+def bottom_partial_KoverMx2D(t1,t2,t1_,t2_,kernel,params):
+	KoverMx_Dot = grad(grad(KoverMx2D, 0), 1)
+	return jnp.sum(jnp.dot(jnp.array([0.,-1.]),KoverMx_Dot(t1,t2,t1_,t2_,kernel,params)))
+
+def right_partial_KoverMx_2D(T,T_,kernel,params):
+	KoverMx_Dot = grad(grad(KoverMx2D,0),1)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), KoverMx_Dot(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+
+# This version of the function only takes scalars as inputs, not arrays
+def right_partial_KoverMx2D(t1,t2,t1_,t2_,kernel,params):
+	KoverMx_Dot = grad(grad(KoverMx2D, 0), 1)
+	return jnp.sum(jnp.dot(jnp.array([1.,0.]),KoverMx_Dot(t1,t2,t1_,t2_,kernel,params)))
+
+def top_partial_KoverMx_2D(T,T_,kernel,params):
+	KoverMx_Dot = grad(grad(KoverMx2D,0),1)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), KoverMx_Dot(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+
+# This version of the function only takes scalars as inputs, not arrays
+def top_partial_KoverMx2D(t1,t2,t1_,t2_,kernel,params):
+	KoverMx_Dot = grad(grad(KoverMx2D, 0), 1)
+	return jnp.sum(jnp.dot(jnp.array([0.,1.]),KoverMx_Dot(t1,t2,t1_,t2_,kernel,params)))
+
+def left_partial_KoverMx_2D(T,T_,kernel,params):
+	KoverMx_Dot = grad(grad(KoverMx2D,0),1)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), KoverMx_Dot(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+
+# This version of the function only takes scalars as inputs, not arrays
+def left_partial_KoverMx2D(t1,t2,t1_,t2_,kernel,params):
+	KoverMx_Dot = grad(grad(KoverMx2D, 0), 1)
+	return jnp.sum(jnp.dot(jnp.array([-1.,0.]),KoverMx_Dot(t1,t2,t1_,t2_,kernel,params)))
