@@ -67,7 +67,6 @@ def Gaussian2D(x1,x2,y1,y2,params):
   r2 = ((x1-y1)**2 + (x2-y2)**2)
   return jnp.exp(-r2/(2*sigma**2))
 
-@jit
 def Matern_Kernel_52_2D(x1,x2,y1,y2,params):
 	rho = params
 	d = jnp.sqrt(((x1-y1)**2 + 10*(x2-y2)**2) + 1e-8)
