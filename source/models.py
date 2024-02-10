@@ -202,3 +202,18 @@ def darcy_solutions(X, k, d, c, m=3):
     a_y = u_dot(a, X, 2, 1)
 
     return u, u_x, u_y, u_xx, u_yy, a_vals, a_x, a_y
+
+
+def rel_mse(true, pred, root = True):
+
+    '''
+    true: Array of ground truth. 
+    pred: Array of predictions. 
+    root: If True, it computes the relative root mse.  
+    '''
+    num = np.sum(np.square(true - pred))
+    den = np.sum(np.square(true))
+    error = num/den
+    if root:
+        error = np.sqrt(error)
+    return error

@@ -253,39 +253,39 @@ def big_term2D(T,T_,kernel,params):
 #  block 1,2 : bottom : first_term12 - h*second_term12
 def first_term_12(T,T_,kernel,params):
 	first_term = jacfwd(KoverMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,-1.]), first_term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,-1.]), jnp.array(first_term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 def second_term12(T,T_,kernel,params):
 	second_term = jacfwd(partialx_MtimesPartialx_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,-1.]), second_term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,-1.]), jnp.array(second_term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 
 #  block 1,3 : right : first_term13 - h*second_term13
 def first_term_13(T,T_,kernel,params):
 	first_term = jacfwd(KoverMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), first_term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), jnp.array(first_term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 def second_term13(T,T_,kernel,params):
 	second_term = jacfwd(partialx_MtimesPartialx_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), second_term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), jnp.array(second_term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 #  block 1,4 : top : first_term14 - h*second_term14
 def first_term_14(T,T_,kernel,params):
 	first_term = jacfwd(KoverMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), first_term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), jnp.array(first_term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 def second_term14(T,T_,kernel,params):
 	second_term = jacfwd(partialx_MtimesPartialx_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), second_term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), jnp.array(second_term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 #  block 1,5 : top : first_term15 - h*second_term15
 def first_term_15(T,T_,kernel,params):
 	first_term = jacfwd(KoverMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), first_term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), jnp.array(first_term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 def second_term15(T,T_,kernel,params):
 	second_term = jacfwd(partialx_MtimesPartialx_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), second_term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), jnp.array(second_term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 # block 2,2 : bottom-bottom
 
@@ -294,25 +294,25 @@ def partialx_nbottom_overMy2D(t1,t2,t1_,t2_,kernel,params):
 
 def partialy_nbottom_partialx_nbottom_overMy2D(T, T_,kernel,params):
 	term = jacfwd(partialx_nbottom_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,-1.]), term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,-1.]), jnp.array(term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 # block 2,3
 
 def partialy_nright_partialx_nbottom_overMy2D(T, T_,kernel,params):
 	term = jacfwd(partialx_nbottom_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), jnp.array(term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 # block 2,4
 
 def partialy_ntop_partialx_nbottom_overMy2D(T, T_,kernel,params):
 	term = jacfwd(partialx_nbottom_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), jnp.array(term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 # block 2,5
 
 def partialy_nleft_partialx_nbottom_overMy2D(T, T_,kernel,params):
 	term = jacfwd(partialx_nbottom_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), jnp.array(term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 # block 3,3 : right-right
 
@@ -321,19 +321,19 @@ def partialx_nright_overMy2D(t1,t2,t1_,t2_,kernel,params):
 
 def partialy_nright_partialx_nright_overMy2D(T, T_,kernel,params):
 	term = jacfwd(partialx_nright_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), jnp.array(term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 # block 3,4
 
 def partialy_ntop_partialx_nright_overMy2D(T, T_,kernel,params):
 	term = jacfwd(partialx_nright_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), jnp.array(term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 # block 3,5
 
 def partialy_nleft_partialx_nright_overMy2D(T, T_,kernel,params):
 	term = jacfwd(partialx_nright_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), jnp.array(term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 # block 4,4 : top-top
 
@@ -342,13 +342,13 @@ def partialx_ntop_overMy2D(t1,t2,t1_,t2_,kernel,params):
 
 def partialy_ntop_partialx_ntop_overMy2D(T, T_,kernel,params):
 	term = jacfwd(partialx_ntop_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), jnp.array(term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 # block 4,5
 
 def partialy_nleft_partialx_ntop_overMy2D(T, T_,kernel,params):
 	term = jacfwd(partialx_ntop_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), jnp.array(term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 # block 5,5 : left-left
 
@@ -357,7 +357,7 @@ def partialx_nleft_overMy2D(t1,t2,t1_,t2_,kernel,params):
 
 def partialy_nleft_partialx_nleft_overMy2D(T, T_,kernel,params):
 	term = jacfwd(partialx_nleft_overMy2D, argnums=[2,3])
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), term(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), jnp.array(term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 
 # Boundary terms
@@ -365,13 +365,13 @@ def partialy_nleft_partialx_nleft_overMy2D(T, T_,kernel,params):
 # top term can be built as it is
 
 def partialx_nbottom_overMx_2D(T,T_,kernel,params):
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,-1.]), partial_KoverMx2D(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,-1.]), jnp.array(partial_KoverMx2D(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 def partialx_nright_overMx_2D(T,T_,kernel,params):
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), partial_KoverMx2D(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([1.,0.]), jnp.array(partial_KoverMx2D(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 def partialx_ntop_overMx_2D(T,T_,kernel,params):
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), partial_KoverMx2D(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), jnp.array(partial_KoverMx2D(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
 def partialx_nleft_overMx_2D(T,T_,kernel,params):
-	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), partial_KoverMx2D(t[0],t[1], t_[0],t_[1],kernel,params)))(T_))(T)
+	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), jnp.array(partial_KoverMx2D(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
