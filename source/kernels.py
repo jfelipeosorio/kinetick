@@ -241,7 +241,7 @@ def partialx_MtimesPartialx_overMy2D(t1,t2,t1_,t2_,kernel,params):
 
 def partialy_partialx_MtimesPartialx_overMy_timesMy2D(t1,t2,t1_,t2_,kernel,params):
 	Dot_y = jacfwd(partialx_MtimesPartialx_overMy2D, argnums=[2,3])
-	return jnp.array(Dot_y(t1,t2,t1_,t2_,kernel,params)) / M_2D(t1_,t2_)
+	return jnp.array(Dot_y(t1,t2,t1_,t2_,kernel,params)) * M_2D(t1_,t2_)
 
 def big_term2D(T,T_,kernel,params):
 	final = jacfwd(partialy_partialx_MtimesPartialx_overMy_timesMy2D, argnums=[2,3])
@@ -277,7 +277,7 @@ def second_term14(T,T_,kernel,params):
 	second_term = jacfwd(partialx_MtimesPartialx_overMy2D, argnums=[2,3])
 	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([0.,1.]), jnp.array(second_term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
 
-#  block 1,5 : top : first_term15 - h*second_term15
+#  block 1,5 : left : first_term15 - h*second_term15
 def first_term_15(T,T_,kernel,params):
 	first_term = jacfwd(KoverMy2D, argnums=[2,3])
 	return vmap(lambda t: vmap(lambda t_: jnp.dot(jnp.array([-1.,0.]), jnp.array(first_term(t[0],t[1], t_[0],t_[1],kernel,params))))(T_))(T)
