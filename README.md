@@ -1,3 +1,4 @@
 # Using kernels to solve kinetic equations
 
-Solving kinetic equations using kernels. Change.
+Solving kinetic equations using kernels. Change2.
+
